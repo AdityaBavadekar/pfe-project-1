@@ -88,7 +88,7 @@ class ClassificationModel:
     self.img_height, self.img_width = 180, 180
 
   def predict(self, image_path: str):
-    img = tf.keras.utils.load_img(image_path, target_size=(self.mg_height, self.img_width))
+    img = tf.keras.utils.load_img(image_path, target_size=(self.img_height, self.img_width))
     img_array = tf.keras.utils.img_to_array(img)
     img_array = tf.expand_dims(img_array, 0) # Create a batch
 
