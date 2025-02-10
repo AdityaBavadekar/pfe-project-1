@@ -5,6 +5,7 @@ from PIL import Image, ImageTk
 from tkinter import Label, Button, Tk, filedialog
 from model import ClassificationModel
 
+DIMENS = (300, 300)
 
 class CropImageClassificationApp:
     """
@@ -50,16 +51,22 @@ class CropImageClassificationApp:
         # Remove all widgets from the window before adding new ones
         for widget in self.window.winfo_children():
             widget.place_forget()
-
+        Label(self.window, text="Select or Capture an Image to See the Results", font=("Arial", 20), bg="#0000ff", fg="white").place(x=50, y=20)
+        
         file_chooser_btn = Button(self.window, width=20, text="Select image", font=(
             "Arial", 15), bg="#ff0000", command=self.open_file)
         file_chooser_btn.place(x=10, y=560)
         self.capture_image_button = Button(self.window, width=20, text="Capture", font=(
             "Arial", 15), bg="#ff0000", command=self.capture_picture)
         self.ImageLabel = Label(self.window, bg="white")
-        self.ImageLabel.place(x=0, y=0)
+        # self.ImageLabel.place(x=0, y=30)
         self.capture_image_button.place(x=360, y=560)
+        
+        file_chooser_btn.place(x=20, y=560)
+        self.capture_image_button.place(x=400, y=560)
+
         self.app_main()
+
 
     def open_file(self):
         file_path = filedialog.askopenfilename(
@@ -113,13 +120,15 @@ class CropImageClassificationApp:
                bg="#ff0000", command=self.render_capture_layout).place(x=100, y=250)
         Button(self.window, text="Exit",
                bg="#ff0000", command=self.window.quit).place(x=350, y=250)
-
+        
         frame = cv2.imread(self.eval_image_path())
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         picture = Image.fromarray(frame)
-        picture = picture.resize((300, 300), resample=0)
+        picture = picture.resize(DIMENS, resample=0)
         picture = ImageTk.PhotoImage(picture)
         self.ImageLabel.configure(image=picture)
         self.ImageLabel.photo = picture
+        self.ImageLabel.place(x=(self.window.winfo_width() - 300) // 2, y=300)
         self.window.update()
 
     def app_main(self):
@@ -147,19 +156,19 @@ class CropImageClassificationApp:
                 self.change_to_results_layout(
                     predicted_class, prediction_confidence)
                 break
-
             ret, frame = self.camera.read()
             if ret and not self.take_picture:
                 self.last_frame = frame
-                self.last_frame = cv2.cvtColor(self.last_frame, cv2.COLOR_BGR2RGB)
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 picture = Image.fromarray(frame)
                 picture = picture.resize((500, 400), resample=0)
                 picture = ImageTk.PhotoImage(picture)
                 self.ImageLabel.configure(image=picture)
                 self.ImageLabel.photo = picture
+                self.ImageLabel.place(x=(self.window.winfo_width() - 500) // 2, y=80)  # Added top margin
                 self.window.update()
                 time.sleep(0.001)
-                
+
     def run(self):
         """
         Run the main application loop.
@@ -167,7 +176,7 @@ class CropImageClassificationApp:
         print("Starting the Crop Image Classification App...")
         self.window.mainloop()
                 
-                
+
 def run_app():
     app = CropImageClassificationApp()
     app.run()
