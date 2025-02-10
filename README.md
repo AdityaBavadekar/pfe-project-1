@@ -10,12 +10,14 @@ This application is useful in agricultural or related domains where classificati
 
 
 ## **Index**
-- [Demo](#demo)  
-- [Installation](#installation)  
-- [How to Use](#how-to-use)  
-- [Technologies Used](#technologies-used)  
+- [Demo](#demo)
+- [Installation](#installation)
+- [Technologies Used](#technologies-used)
 
-<!-- ## Demo   -->
+## Demo
+![Screenshot 2025-02-10 195628](https://github.com/user-attachments/assets/798d17df-3915-4c2e-a824-65041da59d03)
+
+![Screenshot 2025-02-10 195649](https://github.com/user-attachments/assets/0aee41c6-6e04-4ffb-9fa2-36ea6973dc1f)
 
 
 ## Installation
