@@ -15,7 +15,8 @@ This application is useful in agricultural or related domains where classificati
 - [How to Use](#how-to-use)  
 - [Technologies Used](#technologies-used)  
 
-<!-- ## Demo   -->
+## Demo
+https://github.com/user-attachments/assets/6baf0641-0db8-4061-9cb0-637974066a21
 
 
 ## Installation
