@@ -5,7 +5,7 @@ from PIL import Image, ImageTk
 from tkinter import Label, Button, Tk, filedialog
 from model import ClassificationModel
 
-DIMENS = (300, 300)
+DIMENS = (500, 400)
 
 class CropImageClassificationApp:
     """
@@ -30,7 +30,7 @@ class CropImageClassificationApp:
         # Prediction function for the model
         self.fn_predict = fn_predict
         # Path to save captured image
-        self.save_image_path = "image.jpg"
+        self.save_image_path = "runner_temp.jpg"
         self.eval_image_path = lambda: self.save_image_path
 
         self.window = window
@@ -52,18 +52,19 @@ class CropImageClassificationApp:
         for widget in self.window.winfo_children():
             widget.place_forget()
         Label(self.window, text="Select or Capture an Image to See the Results", font=("Arial", 20), bg="#0000ff", fg="white").place(x=50, y=20)
-        
         file_chooser_btn = Button(self.window, width=20, text="Select image", font=(
             "Arial", 15), bg="#ff0000", command=self.open_file)
         file_chooser_btn.place(x=10, y=560)
         self.capture_image_button = Button(self.window, width=20, text="Capture", font=(
             "Arial", 15), bg="#ff0000", command=self.capture_picture)
         self.ImageLabel = Label(self.window, bg="white")
-        # self.ImageLabel.place(x=0, y=30)
         self.capture_image_button.place(x=360, y=560)
         
         file_chooser_btn.place(x=20, y=560)
         self.capture_image_button.place(x=400, y=560)
+        
+        self.live_prediction_label = Label(self.window, text="Live Prediction: ", font=("Arial", 15), bg="#0000ff", fg="white")
+        self.live_prediction_label.place(x=20, y=500)
 
         self.app_main()
 
@@ -149,7 +150,7 @@ class CropImageClassificationApp:
             if self.picture_taken:
                 self.camera.release()
                 print("Predicting the Image")
-                predicted_class, prediction_confidence = self.fn_predict(
+                predicted_class, prediction_confidence, is_false_prediction = self.fn_predict(
                     self.eval_image_path())
                 print(
                     f"Predicted Class: {predicted_class.upper()}, Prediction Confidence: {prediction_confidence:.2f}")
@@ -161,11 +162,21 @@ class CropImageClassificationApp:
                 self.last_frame = frame
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 picture = Image.fromarray(frame)
-                picture = picture.resize((500, 400), resample=0)
+                picture = picture.resize(DIMENS, resample=0)
                 picture = ImageTk.PhotoImage(picture)
                 self.ImageLabel.configure(image=picture)
                 self.ImageLabel.photo = picture
-                self.ImageLabel.place(x=(self.window.winfo_width() - 500) // 2, y=80)  # Added top margin
+                self.ImageLabel.place(x=(self.window.winfo_width() - DIMENS[0]) // 2, y=80)  # Added top margin
+                cv2.imwrite("live.png", self.last_frame)
+                predicted_class, prediction_confidence, is_false_prediction = self.fn_predict("live.png")
+                if not is_false_prediction:
+                    # print(f"\t"*10 + f"{predicted_class.upper()} ==> {prediction_confidence:.2f}")
+                    self.live_prediction_label.configure(
+                        text=f"Live Prediction: {prediction_confidence:.2f} ==> {predicted_class.upper()}")
+                else:
+                    self.live_prediction_label.configure(
+                        text=f"Live Prediction: Prediction below threshold")
+                    # print("\t"*10 + "Prediction below threshold")
                 self.window.update()
                 time.sleep(0.001)
 
